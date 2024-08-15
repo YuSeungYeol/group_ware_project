@@ -1,0 +1,17 @@
+# Conversion to YAML from Properties formar report
+# Warnings:
+# - The yaml file had comments which are lost in the refactoring!
+spring:
+  application:
+    name: group_ware
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/mvc_study
+    username: scott
+    password: tiger
+  security:
+    user:
+      name: user
+      password: 1234
+server:
+  port: 8095

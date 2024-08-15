@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <th:block th:fragment="navLayout">
+    <link th:href="@{/css/include/nav.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+        <div id="sidebar">
+        <h1>프로필</h1>
+        <ul>
+            <li>
+                <a href="#home" class="accordion-toggle">일정</a>
+                <ul>
+                    <li><a href="#calendar">캘린더</a></li>
+                    <li><a href="#tasks">작업 목록</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#about" class="accordion-toggle">전자결재</a>
+                <ul>
+                    <li><a href="#inbox">받은 문서</a></li>
+                    <li><a href="#sent">발송 문서</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#services" class="accordion-toggle">드라이브</a>
+                <ul>
+                    <li><a href="#files">파일 관리</a></li>
+                    <li><a href="#shared">공유 파일</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#contact" class="accordion-toggle">주소록</a>
+                <ul>
+                    <li><a href="#contacts">연락처</a></li>
+                    <li><a href="#groups">그룹</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#messenger" class="accordion-toggle">메신저</a>
+                <ul>
+                    <li><a href="#chat">채팅</a></li>
+                    <li><a href="#contacts">연락처</a></li>
+                </ul>
+            </li>
+            <li>
+            	<a href="#board" class="accordion-toggle">게시판</a>
+            	<ul>
+            		<li><a href="#notice">공지사항</a></li>
+            		<li><a th:href="@{/board}">부서게시판</a></li>
+            	</ul>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.accordion-toggle');
+
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const parentLi = this.parentElement;
+                    const isActive = parentLi.classList.contains('active');
+
+                    // 모든 항목을 비활성화합니다.
+                    document.querySelectorAll('#sidebar ul li').forEach(li => {
+                        li.classList.remove('active');
+                    });
+
+                    // 클릭한 항목이 활성화되지 않은 경우만 활성화합니다.
+                    if (!isActive) {
+                        parentLi.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+    </th:block>
+</html>

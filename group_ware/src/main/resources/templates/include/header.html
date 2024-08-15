@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="headerLayout">
+	<link th:href="@{/css/include/header.css}" rel="stylesheet" type="text/css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<header>
+		<div id="header_wrap">
+			<div class="menu_tap">	
+				<a >로고</a>
+			</div>
+			<div id="menu_right">
+				<button id="check_in">출근</button>
+				<button id="check_out">퇴근</button>	
+			</div>
+		</div>
+	</header>
+</th:block>
+</html>

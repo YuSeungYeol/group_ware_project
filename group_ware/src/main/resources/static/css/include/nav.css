@@ -1,0 +1,81 @@
+/* Sidebar 스타일 */
+body {
+    font-family: 'Noto Sans', sans-serif;
+}
+#sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: rgba(111,89,117,0.7) ;   
+    color: rgb(255, 255, 255);
+    padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+}
+
+#sidebar h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 10;
+    
+}
+
+#sidebar ul li {
+    margin: 15px 0;
+    position: relative;
+    overflow: hidden; 
+    transition: height 0.3s ease;
+}
+
+#sidebar ul li a {
+	color: white;   
+	text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    
+}
+
+#sidebar ul li a:hover {
+    background-color: rgba(111,89,117,0.9);   
+    border-radius: 10px;
+    transform: translate(5px, 5px); /* 오른쪽 아래로 살짝 이동 */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* 아코디언 메뉴 스타일 */
+#sidebar ul li ul {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(111,89,117,0.2) ;   
+    border-radius: 10;
+    overflow: hidden;
+}
+
+#sidebar ul li.active > ul {
+    display: block;
+    transform: translate(5px, 5px); /* 서브메뉴도 오른쪽 아래로 살짝 이동 */
+    transition: transform 0.3s ease;
+    margin-left: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+#sidebar ul li ul li a {
+    padding: 10px;
+    border-radius: 10;
+}
+
+#sidebar ul li ul li a:hover {
+    background-color: rgba(111,89,117,0.2) ;   
+    border-radius: 10;
+    color : black;
+}
