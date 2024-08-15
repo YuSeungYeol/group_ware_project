@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ware.spring.board.domain.Board;
 import com.ware.spring.board.domain.BoardDto;
 import com.ware.spring.board.repository.BoardRepository;
-
+ 
 @Service
 public class BoardService {
 
