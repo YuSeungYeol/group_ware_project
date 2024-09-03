@@ -120,8 +120,8 @@ public class AuthorizationApiController {
             resultMap.put("res_msg", "Authorization 생성 중 오류가 발생했습니다.");
         }
 
-        int a = 1;
-        		
+        int b = 10;
+
         return resultMap;
     }
 
