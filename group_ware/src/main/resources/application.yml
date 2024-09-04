@@ -6,7 +6,7 @@ spring:
     name: group_ware
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/mvc_study
+    url: jdbc:mariadb://127.0.0.1:3306/group_ware
     username: scott
     password: tiger
   security:
