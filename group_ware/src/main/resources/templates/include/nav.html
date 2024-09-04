@@ -1,80 +1,106 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="navLayout">
-    <link th:href="@{/css/include/nav.css}" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-     
-        <div id="sidebar">
-        <h1>프로필</h1>
-        <ul>
-            <li>
-                <a href="#home" class="accordion-toggle">일정</a>
-                <ul>
-                    <li><a href="#calendar">캘린더</a></li>
-                    <li><a href="#tasks">작업 목록</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#about" class="accordion-toggle">전자결재</a>
-                <ul>
-                    <li><a href="#inbox">받은 문서</a></li>
-                    <li><a href="#sent">발송 문서</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#services" class="accordion-toggle">드라이브</a>
-                <ul>
-                    <li><a href="#files">파일 관리</a></li>
-                    <li><a href="#shared">공유 파일</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#contact" class="accordion-toggle">주소록</a>
-                <ul>
-                    <li><a href="#contacts">연락처</a></li>
-                    <li><a href="#groups">그룹</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#messenger" class="accordion-toggle">메신저</a>
-                <ul>
-                    <li><a href="#chat">채팅</a></li>
-                    <li><a href="#contacts">연락처</a></li>
-                </ul>
-            </li>
-            <li>
-            	<a href="#board" class="accordion-toggle">게시판</a>
-            	<ul>
-            		<li><a href="#notice">공지사항</a></li>
-            		<li><a th:href="@{/board}">부서게시판</a></li>
-            	</ul>
-            </li>
-        </ul>
-    </div>
+        <link th:href="@{/css/include/nav.css}" rel="stylesheet" type="text/css">
+        <section class="sidebar">
+            <aside class="profile-section">
+                <div class="profile-info">
+                    <img src="path-to-profile-image" alt="Profile Image" class="profile-img">
+                    <div class="user-details">
+                        <h2>홍길동 대리</h2>
+                        <p>010-1111-1111</p>
+                        <p>hong@gmail.com</p>
+                        <div class="buttons">
+                            <button class="btn">마이페이지</button>
+                            <button class="btn">근태현황</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggles = document.querySelectorAll('.accordion-toggle');
+            <nav class="accordion-nav">
+                <div class="accordion-item">
+                    <button class="accordion-btn">캘린더</button>
+                    <div class="accordion-content">
+                        <a href="#">내 일정</a>
+                        <a href="#">일정 추가</a>
+                    </div>
+                </div>
 
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const parentLi = this.parentElement;
-                    const isActive = parentLi.classList.contains('active');
+                <div class="accordion-item">
+                    <button class="accordion-btn">드라이브</button>
+                    <div class="accordion-content">
+                        <a href="#">개인드라이브</a>
+                        <a href="#">부서드라이브</a>
+                    </div>
+                </div>
 
-                    // 모든 항목을 비활성화합니다.
-                    document.querySelectorAll('#sidebar ul li').forEach(li => {
-                        li.classList.remove('active');
-                    });
+                <div class="accordion-item">
+                    <button class="accordion-btn">지점 정보</button>
+                    <div class="accordion-content">
+                        <a href="#">매장정보</a>
+                        <a href="#">지점등록</a>
+                    </div>
+                </div>
 
-                    // 클릭한 항목이 활성화되지 않은 경우만 활성화합니다.
-                    if (!isActive) {
-                        parentLi.classList.add('active');
+                <div class="accordion-item">
+                    <button class="accordion-btn">전자결재</button>
+                    <div class="accordion-content">
+                        <a th:href="@{/authorization/authorizationList}">결재</a>
+                        <a th:href="@{/authorization/authorizationDocument}">결재 문서함</a>
+                        <a href="#">임시 저장함</a>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-btn">직원관리</button>
+                    <div class="accordion-content">
+                        <a href="#">근태조회</a>
+                        <a href="#">회원가입</a>
+                        <a href="#">회원수정</a>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-btn">차량관리</button>
+                    <div class="accordion-content">
+                        <a href="#">차량조회</a>
+                        <a href="#">차량등록&서류</a>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-btn">공지</button>
+                    <div class="accordion-content">
+                        <a href="#">공지사항</a>
+                        <a href="#">게시판</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 조직도와 메신저 버튼 -->
+            <div class="bottom-buttons">
+                <button class="btn">조직도(주소록)</button>
+                <button class="btn">메신저</button>
+            </div>
+        </section>
+        
+        <script>
+            // Accordion functionality
+            const accordionBtns = document.querySelectorAll(".accordion-btn");
+
+            accordionBtns.forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    const content = this.nextElementSibling;
+                    this.classList.toggle("active");
+
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
                     }
                 });
             });
-        });
-    </script>
+        </script>
     </th:block>
 </html>

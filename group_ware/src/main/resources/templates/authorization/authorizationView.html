@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+    <title>전자결재(발송)</title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <section>
+            <div id="section_wrap">
+                <div class="word">
+                    <h3>전자 결재</h3>
+                </div><br>
+                <div class="search" th:if="${searchDto != null}">
+                    <input type="submit" value="임시저장">
+                    <input type="submit" value="제출">
+                    <input type="button" value="삭제"> <!-- 수정된 부분 -->
+                </div>
+                <div class="search" th:if="${searchDto == null}">
+                    <textarea id="document-editor">
+                        <!-- 이 부분은 JavaScript에서 CKEditor 초기화 코드에서 처리할 수 있습니다 -->
+                        여기에 문서 내용을 작성하세요...
+                    </textarea>
+                </div>
+                <div class="file-attachment">
+                    <label for="file-upload" class="custom-file-upload">
+                        파일 첨부
+                    </label>
+                    <input id="file-upload" type="file" multiple />
+                    <div id="file-list"></div>
+                </div>
+            </div>
+        </section>
+    </th:block>
+
+    <!-- CKEditor 초기화 -->
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('document-editor', {
+            // CKEditor 초기 값 설정
+            on: {
+                instanceReady: function() {
+                    this.setData('<h1>문서 제목</h1><p>여기에 문서 내용을 작성하세요...</p>');
+                }
+            }
+        });
+
+        // 파일 업로드 기능 처리
+        const fileInput = document.getElementById('file-upload');
+        const fileList = document.getElementById('file-list');
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            fileList.innerHTML = ''; // 기존 파일 목록 초기화
+
+            for (let i = 0; i < files.length; i++) {
+                const fileItem = document.createElement('div');
+                fileItem.textContent = files[i].name;
+                fileList.appendChild(fileItem);
+            }
+        });
+    </script>
+</body>
+</html>

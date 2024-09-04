@@ -4,16 +4,41 @@
      layout:decorate="~{include/layout}">
      <th:block layout:fragment="content">
        	<link th:href="@{/css/home.css}" rel="stylesheet" type="text/css">
+       	<link th:href="@{/css/board/list.css}" rel="stylesheet" type="text/css">
+       	<link th:href="@{/css/include/paging.css}" rel="stylesheet" type="text/css">
        	<section>
 		<div id="section_wrap">
 			<div class="word">
-				<h3>게시글 목록</h3>
+				<h3>부서 게시글 목록</h3>
 			</div><br>
+			<div class="search" th:if="${searchDto != null}">
+				<form th:action="@{/board}" th:object="${searchDto}" method="get">
+					<select name="search_type" th:value="${searchDto.search_type}">
+						<option th:value="1" th:selected="${searchDto.search_type} == '1'">제목</option>
+						<option th:value="2" th:selected="${searchDto.search_type} == '2'">내용</option>
+						<option th:value="3" th:selected="${searchDto.search_type} == '3'">제목+내용</option>
+					</select> 
+					<input type="text" name="search_text" 
+					th:field="*{search_text}" placeholder="검색어를 입력하세요">
+					<input type="submit" value="검색">
+				</form>
+			</div>
+			<div class="search" th:if="${searchDto == null}">
+				<form th:action="@{/board}" method="get">
+					<select name="search_type">
+						<option th:value="1">제목</option>
+						<option th:value="2">내용</option>
+						<option th:value="3">제목+내용</option>
+					</select> 
+					<input type="text" name="search_text" placeholder="검색어를 입력하세요">
+					<input type="submit" value="검색">
+				</form>
+			</div>
 			<div class="book_list">
 				<table>
 					<colgroup>
 						<col width="10%">
-						<col width="40%">
+						<col width="20%">
 						<col width="20%">
 						<col width="20%">
 						<col width="10%">
@@ -28,16 +53,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!-- 1. resultList.content에서 목록 꺼내기 -->
-						<th:block th:if="${#lists.isEmpty(resultList.content)}">
+						<!-- 1. resultList에서 목록 꺼내기 -->
+						<th:block th:if="${#lists.isEmpty(resultList)}">
 							<tr>
 								<td colspan="5">해당하는 게시글이 없습니다.</td>
 							</tr>
 						</th:block>
-						<!-- 2. pageable을 활용해서 게시글 번호 수정 -->
-						<th:block th:if="${!#lists.isEmpty(resultList.content)}">
-							<tr th:each="board, boardStat : ${resultList.content}">
-								<td th:text="${(resultList.pageable.pageSize)*(resultList.pageable.pageNumber)+boardStat.count}"></td>
+						<!-- 2. resultList를 활용해서 게시글 출력 -->
+						<th:block th:if="${!#lists.isEmpty(resultList)}">
+							<tr th:each="board, boardStat : ${resultList}">
+								<td th:text="${boardStat.index + 1}"></td>
 								<td th:text="${board.board_title}"></td>
 								<td th:text="${board.board_content}"></td>
 								<td th:text="${#temporals.format(board.reg_date, 'yy-MM-dd')}"></td>
@@ -49,7 +74,6 @@
 					</tbody>
 				</table>
 				<br>
-				<!-- 3. 페이징 관련 로직 추가 -->
 				<div class="center" th:if="${!resultList.isEmpty()}">
 					<div class="pagination"
 						th:with="
