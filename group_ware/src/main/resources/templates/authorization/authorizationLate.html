@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+     <link th:href="@{/css/authorization/authorizationCreate.css}" rel="stylesheet" type="text/css">
+     <style type="text/css">
+     .ck-editor__editable .ck-table-bogus-paragraph {
+	    display: inline-block;
+	    width: 100%;
+     }
+     
+     .aaa{
+     	color:blue !important;
+     }
+     </style>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+      	<section>
+      		<div id="section_wrap">
+      			<form id="authorizationAddFrm" enctype="multipart/form-data">
+      				<div id="section" class="form-section">
+      					<!-- 상태 필드 숨기기 -->
+      					<input type="hidden" id="documentStatus" name="documentStatus" value="미승인">
+      					<label>문서 종류</label>
+			            <select>
+			                <option>지각 사유서</option>
+			            </select>
+			            <label>부서</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+			            <label>결재자</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+			            <label>참조자</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+	      			</div>
+
+					<div class="ckeditor_change">
+				        <textarea id="document-editor" name="content"></textarea>
+				    </div>
+					<div class="fileuploadstart">
+						<input type="file" name="content">
+					</div> 
+					<div class="submitButton">
+						<input type="submit" value="결재요청">
+					    <input type="submit" value="임시저장">
+					    <input type="button" value="취소">
+					</div>
+				</form>
+			</div>
+		</section>
+		<script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/ckeditor.js"></script>
+		<script>
+			 ClassicEditor
+		        .create(document.querySelector('#document-editor'), {
+		        	htmlSupport: {
+		        		allow: [
+			        		{
+				        		name: /.*/,
+				        		attributes: true,
+				        		classes: true,
+				        		styles: true
+			        		}
+		        		]
+		        	},
+		            toolbar: {
+		                items: [
+		                    'heading', '|',
+		                    'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
+		                    'insertTable', 'imageUpload', '|',
+		                    'undo', 'redo'
+		                ]
+		            },
+		            height: 500,  // 에디터 높이 설정
+		            width: '100%',  // 에디터 너비 설정
+		            ckfinder: {
+		                uploadUrl: '/authorization/document/upload'  // 파일 업로드를 위한 URL 설정
+		            },
+		            image: {
+		                toolbar: [
+		                    'imageTextAlternative', 'imageStyle:full', 'imageStyle:side'
+		                ]
+		            },
+		            table: {
+		                contentToolbar: [
+		                    'tableColumn', 'tableRow', 'mergeTableCells'
+		                ]
+		            },
+		        })
+		        .then(editor => {
+		            window.editor = editor;
+		            
+		            // Set initial content
+		            editor.setData(`
+		            		<table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px; color:color !important;">
+			                <tr>
+			                    <td style="width: 20%; height: 40px; border: 1px solid #fff;">소속</td>
+			                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+			                    <td style="width: 20%; height: 40px; border: 1px solid #000;">성명</td>
+			                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+			                </tr>
+			                <tr>
+			                    <td style="width: 20%; height: 40px; border: 1px solid #000;">사원번호</td>
+			                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+			                </tr>
+			            </table>
+
+			            <table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px;">
+			                <tr>
+			                    <td colspan="4" style="text-align: center; border: 1px solid #000; height: 40px;">지각 사유서</td>
+			                </tr>
+			                <tr>
+			                    <td style="width: 20%; height: 40px; border: 1px solid #000;">제목</td>
+			                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+			                </tr>
+			                <tr>
+			                    <td style="width: 20%; height: 40px; border: 1px solid #000;">지각 사유</td>
+			                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+			                </tr>
+			            </table>
+
+			            <table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px;">
+			                <tr>
+			                    <td colspan="2" style="width: 50%; height: 40px; border: 1px solid #000; text-align: center;">결재</td>
+			                    <td colspan="2" style="width: 50%; height: 40px; border: 1px solid #000; text-align: center;">참조</td>
+			                </tr>
+			                <tr>
+			                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+			                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+			                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+			                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+			                </tr>
+			            </table>
+		                <br>
+		                <p>* '지각 사유 관련' 작성란은 생략되었습니다.</p>
+		                <p>* 지각 사유서를 제출할 경우 반드시 기안일에 적어주세요.</p>
+		                <p>1. 지각 사유서는 발생 즉시 제출해야 하며, 지각이 발생한 당일 내로 회사에 보고해야 합니다.</p>
+		                <p>2. 지각 사유서는 정확하고 구체적으로 작성해야 하며, 필요시 지각에 대한 증빙 서류를 첨부해야 합니다.</p>
+		                <p>3. 지각으로 인한 업무에 차질이 발생한 경우, 즉시 상급자에게 보고하고 추가적인 지시를 받아야 합니다.</p>
+		                <p>4. 지각 사유서 제출 후, 회사의 지시나 규정에 따라 추가적인 보고서나 설명을 요구받을 수 있습니다.</p>
+
+		            `);
+		        })
+		        .catch(error => {
+		            console.error('There was a problem initializing the editor:', error);
+		        });
+						    // 폼 제출 이벤트 처리
+			    const form = document.getElementById("authorizationAddFrm");
+			    form.addEventListener('submit', (e) => {
+			        e.preventDefault();
+			        let vali_check = false;
+			        let vali_text = "";
+			
+			        // CKEditor 내용 가져오기
+			        const content = editor.getData();
+			
+			        if (content == "") {
+			            vali_text += "내용을 입력하세요.";
+			            editor.focus();
+			        } else {
+			            vali_check = true;
+			        }
+			
+			        if (!vali_check) {
+			            alert(vali_text);
+			        } else {
+			            const payload = new FormData(form);
+			            payload.set('content', content);  // CKEditor 내용 추가
+			
+			            fetch('/authorization', {
+			                method: 'POST',
+			                body: payload
+			            })
+			            .then(response => response.json())
+			            .then(data => {
+			                if (data.res_code == '200') {
+			                    Swal.fire({
+			                        icon: 'success',
+			                        title: '성공',
+			                        text: data.res_msg,
+			                        confirmButtonText: "닫기"
+			                    }).then((result) => {
+			                        location.href = "/authorization/list";
+			                    });
+			                } else {
+			                    Swal.fire({
+			                        icon: 'error',
+			                        title: '실패',
+			                        text: data.res_msg,
+			                        confirmButtonText: "닫기"
+			                    });
+			                }
+			            });
+			        }
+			    });
+			</script>
+     </th:block>
+</html>

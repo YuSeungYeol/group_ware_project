@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+     <link th:href="@{/css/authorization/authorizationCreate.css}" rel="stylesheet" type="text/css">
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+      	<section>
+      		<div id="section_wrap">
+      			<form id="authorizationAddFrm" enctype="multipart/form-data">
+      				<div id="section" class="form-section">
+      					<!-- 상태 필드 숨기기 -->
+      					<input type="hidden" id="documentStatus" name="documentStatus" value="미승인">
+      					<label>문서 종류</label>
+			            <select>
+			                <option>연차 보고서</option>
+			            </select>
+			            <label>부서</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+			            <label>결재자</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+			            <label>참조자</label>
+			            <select>
+			                <option>전체</option>
+			            </select>
+	      			</div>
+
+					<div class="ckeditor_change">
+				        <textarea id="document-editor" name="content"></textarea>
+				    </div>
+					<div class="fileuploadstart">
+						<input type="file" name="content">
+					</div> 
+					<div class="submitButton">
+						<input type="submit" value="결재요청">
+					    <input type="submit" value="임시저장">
+					    <input type="button" value="취소">
+					</div>
+				</form>
+			</div>
+		</section>
+		<script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/ckeditor.js"></script>
+		<script>
+		ClassicEditor
+	    .create(document.querySelector('#document-editor'), {
+	        toolbar: {
+	            items: [
+	                'heading', '|',
+	                'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
+	                'insertTable', 'imageUpload', '|',
+	                'undo', 'redo'
+	            ]
+	        },
+	        height: '300px',  // 에디터 높이 설정
+	        width: '500px',  // 에디터 너비 설정
+	        ckfinder: {
+	            uploadUrl: '/authorization/document/upload'  // 파일 업로드를 위한 URL 설정
+	        },
+	        image: {
+	            toolbar: [
+	                'imageTextAlternative', 'imageStyle:full', 'imageStyle:side'
+	            ]
+	        },
+	        table: {
+	            contentToolbar: [
+	                'tableColumn', 'tableRow', 'mergeTableCells'
+	            ]
+	        },
+	    })
+	    .then(editor => {
+	        window.editor = editor;
+
+	        // Set initial content with custom styles and content
+	        editor.setData(`
+	            <table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px;">
+	                <tr>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">소속</td>
+	                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">성명</td>
+	                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+	                </tr>
+	                <tr>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">사원번호</td>
+	                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+	                </tr>
+	            </table>
+
+	            <table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px;">
+	                <tr>
+	                    <td colspan="4" style="text-align: center; border: 1px solid #000; height: 40px;">연차 보고서</td>
+	                </tr>
+	                <tr>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">제목</td>
+	                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+	                </tr>
+	                <tr>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">휴가 구분</td>
+	                    <td style="width: 80%; height: 40px; border: 1px solid #000;" colspan="3"></td>
+	                </tr>
+	                <tr>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">시작 일정</td>
+	                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+	                    <td style="width: 20%; height: 40px; border: 1px solid #000;">종료 일정</td>
+	                    <td style="width: 30%; height: 40px; border: 1px solid #000;"></td>
+	                </tr>
+	            </table>
+
+	            <table style="width: 100%; border: 2px solid #000; border-collapse: collapse; margin-bottom: 20px;">
+	                <tr>
+	                    <td colspan="2" style="width: 50%; height: 40px; border: 1px solid #000; text-align: center;">결재</td>
+	                    <td colspan="2" style="width: 50%; height: 40px; border: 1px solid #000; text-align: center;">참조</td>
+	                </tr>
+	                <tr>
+	                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+	                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+	                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+	                    <td style="width: 25%; height: 40px; border: 1px solid #000;"></td>
+	                </tr>
+	            </table>
+
+	            <p>* '휴가 사유' 작성란은 생략되었습니다.</p>
+	            <p>* 중간/최종 보고서 등을 작성할 경우 반드시 기안일에 적어주세요.</p>
+	            <p>1. 연차의 사용은 근로기준법에 따라 연도별 발병한 연차에 한하여 사용함을 원칙으로 합니다. 단, 최초 입사 시에는 근로 기준법에 따라 발생 예정된 연차를 차용하여 최대 1회 사용할 수 있다.</p>
+	            <p>2. 결재자는 연차 사용을 최종 승인할 수 있는 가중 결재 중의 서면 또는 등록, 첨부함 제출.</p>
+	            <p>3. 중간(메타/기말)에는 사전에 통지서를, 사후에 참석함을 반드시 제출.</p>
+	        `);
+	    })
+	    .catch(error => {
+	        console.error('There was a problem initializing the editor:', error);
+	    });
+
+		    // 폼 제출 이벤트 처리
+		    const form = document.getElementById("authorizationAddFrm");
+		    form.addEventListener('submit', (e) => {
+		        e.preventDefault();
+		        let vali_check = false;
+		        let vali_text = "";
+
+		        // CKEditor 내용 가져오기
+		        const content = editor.getData();
+
+		        if (content == "") {
+		            vali_text += "내용을 입력하세요.";
+		            editor.focus();
+		        } else {
+		            vali_check = true;
+		        }
+
+		        if (!vali_check) {
+		            alert(vali_text);
+		        } else {
+		            const payload = new FormData(form);
+		            payload.set('content', content);  // CKEditor 내용 추가
+
+		            fetch('/authorization', {
+		                method: 'POST',
+		                body: payload
+		            })
+		            .then(response => response.json())
+		            .then(data => {
+		                if (data.res_code == '200') {
+		                    Swal.fire({
+		                        icon: 'success',
+		                        title: '성공',
+		                        text: data.res_msg,
+		                        confirmButtonText: "닫기"
+		                    }).then((result) => {
+		                        location.href = "/authorization/list";
+		                    });
+		                } else {
+		                    Swal.fire({
+		                        icon: 'error',
+		                        title: '실패',
+		                        text: data.res_msg,
+		                        confirmButtonText: "닫기"
+		                    });
+		                }
+		            });
+		        }
+		    });
+		</script>
+     </th:block>
+	</html>

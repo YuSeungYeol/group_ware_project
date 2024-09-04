@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+     <link th:href="@{/css/authorization/authorizationList.css}" rel="stylesheet" type="text/css">
+       	<section style="margin-left: 220px;"> <!-- 추가된 스타일 -->
+		<div class="main-content">
+		<div id="section_wrap">
+			<div class="word">
+				<h3>기안 진행 목록</h3>
+			</div><br>
+			<div class="book_list">
+				<table>
+					<colgroup>
+						<col width="20%">
+						<col width="30%">
+						<col width="20%">
+						<col width="20%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>기안일</th>
+                        	<th>결재 양식</th>
+                        	<th>제목</th>
+                        	<th>상태</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:if="${#lists.isEmpty(resultList)}">
+							<tr>
+								<td colspan="4">해당되는 문서가 없습니다.</td>
+							</tr>
+						</th:block>
+						<th:block th:if="${!#lists.isEmpty(resultList)}">
+						    <tr th:each="authorization, authorizationStat : ${resultList}">
+							    <td th:text="${#temporals.format(authorization.authorRegDate, 'yyyy.MM.dd')}"></td> <!-- 기안일 -->
+							    <td th:text="${authorization.authorName}"></td> <!-- 결재 양식 -->
+							    <td><a href="javascript:void(0);" th:text="${authorization.authorOriThumbnail}" th:onclick="'openApprovalModal(' + ${authorization.authorNo} + ')'"></a></td> <!-- 제목 -->
+							    <td th:text="${authorization.authorStatus}"></td> <!-- 상태 -->
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+				<br>
+				<div id="section_wrap">
+      			<form id="authorizationAddFrm" enctype="multipart/form-data">
+      				<div id="section" class="form-section">
+      				<input type="button" value="새 결재 진행" style="float:right;" onclick="openModal()">
+					<!-- 모달 창 -->
+					<div id="documentModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50%; background-color: white; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
+					    <h3>결재 양식 선택</h3>
+					    <table style="width: 100%;">
+					        <thead>
+					            <tr>
+					                <th>양식</th>
+					                <th>제목</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					            <tr onclick="selectDocument('연차 보고서', '/authOff/authOffCreate?type=1')">
+					                <td>연차 보고서</td>
+					                <td>연차 신청 합니다.</td>
+					            </tr>
+					            <tr onclick="selectDocument('지각 사유서', '/authLate/authLateCreate?type=2')">
+					                <td>지각 사유서</td>
+					                <td>지각 사유 제출 합니다.</td>
+					            </tr>
+					            <tr onclick="selectDocument('해외 출장 신청서', '/authTrip/authTripCreate?type=3')">
+					                <td>해외 출장 신청서</td>
+					                <td>해외 출장 신청 합니다.</td>
+					            </tr>
+					        </tbody>
+					    </table>
+					    <br>
+					    <input type="button" value="취소" onclick="closeModal()">
+					</div>
+					<!-- 모달 배경 -->
+					<div id="modalBackground" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 500;"></div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+	</div>
+		</section>
+		
+		<!-- 결재 상태 모달 창 HTML -->
+		<div id="approvalModal" class="modal" style="display: none;">
+		  <div class="modal-content">
+		    <span class="close">&times;</span>
+		    <h3>결재 상태 상세 화면</h3>
+		    <table>
+		      <thead>
+		        <tr>
+		          <th>결재자</th>
+		          <th>직급</th>
+		          <th>상태</th>
+		        </tr>
+		      </thead>
+		      <tbody id="approvalStatus">
+		        <!-- 결재 상태가 여기에 동적으로 추가됩니다. -->
+		      </tbody>
+		    </table>
+		    <button id="closeBtn">확인</button>
+		  </div>
+		</div>
+
+		<script>
+		// 승인중인 문서 모달 창 열기
+		function openApprovalModal(authorNo) {
+		    console.log("Opening approval modal for authorNo:", authorNo);
+		    fetch(`/approval/${authorNo}`)
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('Network response was not ok');
+		            }
+		            return response.json();
+		        })
+		        .then(data => {
+		            console.log("Data received:", data);
+		            let approvalListHtml = '';
+		
+		            // 모든 상태의 데이터를 표시
+		            data.forEach(approval => {
+		                let statusText = '';
+		                if (approval.approvalStatus === 'P') {
+		                    statusText = '대기중';
+		                } else if (approval.approvalStatus === 'Y') {
+		                    statusText = '승인';
+		                } else if (approval.approvalStatus === 'N') {
+		                    statusText = '반려';
+		                }
+		
+		                approvalListHtml += `
+		                    <tr>
+		                        <td>${approval.memberName}</td>
+		                        <td>${approval.ranksNo || 'N/A'}</td>
+		                        <td>${statusText}</td>
+		                    </tr>`;
+		            });
+		
+		            document.getElementById('approvalStatus').innerHTML = approvalListHtml;
+		            document.getElementById('approvalModal').style.display = 'block';
+		        })
+		        .catch(error => {
+		            console.error("Error fetching approval routes:", error);
+		        });
+		}
+
+
+
+
+		// 모달 닫기 기능 추가
+		document.querySelector('.close').addEventListener('click', function() {
+		    document.getElementById('approvalModal').style.display = 'none';
+		});
+
+		document.getElementById('closeBtn').addEventListener('click', function() {
+		    document.getElementById('approvalModal').style.display = 'none';
+		});
+
+		// 모달 바깥쪽 클릭 시 닫기
+		window.addEventListener('click', function(event) {
+		    if (event.target == document.getElementById('approvalModal')) {
+		        document.getElementById('approvalModal').style.display = 'none';
+		    }
+		});
+
+
+		// 새 결재 진행 모달 열기
+		function openModal() {
+		    document.getElementById('documentModal').style.display = 'block';
+		    document.getElementById('modalBackground').style.display = 'block';
+		}
+
+		// 새 결재 진행 모달 닫기
+		function closeModal() {
+		    document.getElementById('documentModal').style.display = 'none';
+		    document.getElementById('modalBackground').style.display = 'none';
+		}
+
+		// 문서 선택 시 URL로 이동
+		function selectDocument(documentType, url) {
+		    if (confirm(documentType + ' 문서를 작성하시겠습니까?')) {
+		        window.location.href = url;
+		    }
+		}
+		</script>
+     </th:block>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="buttonGroup">
+        <link th:href="@{/css/include/button_group.css}" rel="stylesheet" type="text/css">
+
+        <!-- 오른쪽 하단 고정 버튼 그룹 -->
+        <div class="button-group">
+            <!-- 아이콘 버튼들 -->
+            <div class="icon-button">
+                <img src="image/plus.png" alt="추가">
+            </div>
+
+
+            <!-- 액션 버튼들 -->
+            <div class="action-buttons">
+                <button class="btn green" id="btnStartWork" onclick="startWork()">출   근</button>
+                <button class="btn red" id="btnEndWork" onclick="endWork()" disabled>퇴   근</button>
+                
+                <!-- 외출 버튼과 메뉴 -->
+                <div class="dropdown">
+                    <button class="btn gray" id="btnOut" onclick="toggleDropdown()" disabled>착 석</button>
+                    <div class="dropdown-content" id="dropdownMenu">
+                        <a href="#" onclick="selectMenu('외 근')">외 근</a>
+                        <a href="#" onclick="selectMenu('외 출')">외 출</a>
+                        <a href="#" onclick="selectMenu('식 사')">식 사</a>
+                        <a href="#" onclick="selectMenu('착 석')">착 석</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // 출근 시간 기록용 변수
+            let startTime = null;
+            let endTime = null;
+            let currentStatus = "착 석";  // 기본 상태
+
+            // 출근 기능
+            function startWork() {
+                // 현재 시간을 출근 시간으로 기록
+                startTime = new Date();
+
+                // 출근 시간 콘솔에 출력 (나중에 백엔드로 전송할 부분)
+                console.log("출근 시간:", startTime);
+
+                // 출근 버튼 비활성화
+                document.getElementById("btnStartWork").disabled = true;
+
+                // 퇴근 및 외출 버튼 활성화
+                document.getElementById("btnEndWork").disabled = false;
+                document.getElementById("btnOut").disabled = false;
+
+                // 출근 시 착석 버튼을 하늘색으로 변경
+                document.getElementById("btnOut").classList.remove("gray");
+                document.getElementById("btnOut").classList.add("blue");
+            }
+
+            // 퇴근 기능
+            function endWork() {
+                // 현재 시간을 퇴근 시간으로 기록
+                endTime = new Date();
+
+                // 퇴근 시간 콘솔에 출력 (나중에 백엔드로 전송할 부분)
+                console.log("퇴근 시간:", endTime);
+
+                // 출근 버튼 재활성화
+                document.getElementById("btnStartWork").disabled = false;
+
+                // 퇴근 및 외출 버튼 비활성화
+                document.getElementById("btnEndWork").disabled = true;
+                document.getElementById("btnOut").disabled = true;
+
+                // 외출 메뉴 초기화 (메뉴 닫기)
+                document.getElementById("dropdownMenu").classList.remove("show");
+
+                // 외출 버튼 초기화
+                document.getElementById("btnOut").innerText = "착 석";
+                document.getElementById("btnOut").classList.remove("purple");
+                document.getElementById("btnOut").classList.remove("blue");
+                document.getElementById("btnOut").classList.add("gray");
+
+                // 상태와 시간을 초기화 (백엔드로 전송할 부분)
+                console.log("근무 종료 - 상태 초기화:", currentStatus);
+                startTime = null;
+                endTime = null;
+                currentStatus = "착 석";
+            }
+
+            // 외출 메뉴 열기/닫기
+            function toggleDropdown() {
+                document.getElementById("dropdownMenu").classList.toggle("show");
+            }
+
+            function selectMenu(option) {
+                // 외출 메뉴에서 선택된 옵션을 버튼에 반영
+                document.getElementById("btnOut").innerText = option;
+
+                // 상태를 저장 (백엔드로 전송할 부분)
+                currentStatus = option;
+                console.log("현재 상태:", currentStatus);
+
+                // "착 석"일 때 하늘색, 나머지 상태는 보라색
+                if (option === '착 석') {
+                    document.getElementById("btnOut").classList.remove("purple");
+                    document.getElementById("btnOut").classList.add("blue");
+                } else {
+                    document.getElementById("btnOut").classList.remove("blue");
+                    document.getElementById("btnOut").classList.add("purple");
+                }
+
+                // 메뉴 닫기
+                document.getElementById("dropdownMenu").classList.remove("show");
+            }
+
+            // 드롭다운 메뉴 바깥을 클릭하면 메뉴가 닫히도록 처리
+            window.onclick = function(event) {
+                if (!event.target.matches('.btn.gray') && !event.target.matches('.btn.blue') && !event.target.matches('.btn.purple') && !event.target.matches('.dropdown-content a')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+        </script>
+    </th:block>
+</html>

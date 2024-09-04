@@ -1,81 +1,146 @@
-/* Sidebar 스타일 */
-body {
-    font-family: 'Noto Sans', sans-serif;
-}
-#sidebar {
-    width: 200px;
-    height: 100vh;
-    background-color: rgba(111,89,117,0.7) ;   
-    color: rgb(255, 255, 255);
-    padding: 20px;
+/* General reset and styling */
+body, h2, p, a, button {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
     box-sizing: border-box;
-    position: fixed;
 }
 
-#sidebar h1 {
+/* 전체 섹션 레이아웃 */
+.sidebar {
+    width: 250px; /* 고정된 너비 */
+    height: 100vh; /* 전체 높이 */
+    display: flex;
+    flex-direction: column; /* 자식 요소를 수직으로 정렬 */
+    position: fixed; /* 화면 왼쪽에 고정 */
+    top: 0;
+    left: 0;
+    background-color: #F6F4FA;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+
+}
+
+
+
+/* Profile Info Section */
+.profile-info {
     text-align: center;
     margin-bottom: 20px;
 }
 
-#sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    border-radius: 10;
+.profile-img {
+    width: 60px; /* 조정된 사이즈 */
+    height: 60px;
+    border-radius: 50%;
+    background-color: #eaeaea;
+    margin-bottom: 10px;
+}
+
+.user-details h2 {
+    font-size: 1rem; /* 조정된 폰트 사이즈 */
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.user-details p {
+    font-size: 0.8rem; /* 조정된 폰트 사이즈 */
+    color: #555;
+}
+
+.buttons {
+    margin-top: 10px;
     
 }
 
-#sidebar ul li {
-    margin: 15px 0;
-    position: relative;
-    overflow: hidden; 
-    transition: height 0.3s ease;
+.buttons .btn {
+    background-color: #EFEFEF;
+    border: none;
+    border-radius: 10px; /* 작은 버튼 */
+    padding: 5px 1px;
+    font-size: 0.7rem; /* 조정된 폰트 사이즈 */
+    margin: 3px;
+    cursor: pointer;
+    color: #666;
+    width: 75px;
 }
 
-#sidebar ul li a {
-	color: white;   
-	text-decoration: none;
-    display: block;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+/* Accordion Navigation */
+.accordion-nav {
+    flex-grow: 1; /* 남은 공간을 차지하게 */
+    width: 100%; /* 250px 내에서 맞추기 위해 */
+    overflow-y: auto; /* 스크롤 가능하게 */
+    padding-bottom: 10px; 
     
 }
-
-#sidebar ul li a:hover {
-    background-color: rgba(111,89,117,0.9);   
-    border-radius: 10px;
-    transform: translate(5px, 5px); /* 오른쪽 아래로 살짝 이동 */
-    transition: transform 0.3s ease, background-color 0.3s ease;
+.accordion-nav::-webkit-scrollbar {
+    width: 0; /* 스크롤바 숨기기 */
+}
+.accordion-item {
+    border-bottom: 1px solid #ddd;
 }
 
-/* 아코디언 메뉴 스타일 */
-#sidebar ul li ul {
-    display: none;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    background-color: rgba(111,89,117,0.2) ;   
-    border-radius: 10;
-    overflow: hidden;
+.accordion-btn {
+    width: 100%;
+    background-color: #F8F5FA;
+    border: none;
+    padding: 8px;
+    text-align: left;
+    font-size: 0.9rem; 
+    cursor: pointer;
+    color: #333;
 }
 
-#sidebar ul li.active > ul {
+.accordion-btn:after {
+    content: '+';
+    float: right;
+    color: #666;
+}
+
+.accordion-btn.active:after {
+    content: '-';
+}
+
+.accordion-content {
+    display: none; 
+    padding-left: 20px;
+    padding-right: 10px; 
+}
+
+.accordion-content a {
     display: block;
-    transform: translate(5px, 5px); /* 서브메뉴도 오른쪽 아래로 살짝 이동 */
-    transition: transform 0.3s ease;
-    margin-left: 10px;
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 5px 0;
+    font-size: 0.8rem; 
+    text-decoration: none;
+    color: #666;
+    cursor: pointer;
 }
 
-#sidebar ul li ul li a {
+.accordion-content a:hover {
+    color: #350;
+}
+
+/* 하단 버튼 스타일링 */
+.bottom-buttons {
+    display: flex;
+    justify-content: space-around;
     padding: 10px;
-    border-radius: 10;
+    background-color: #F6F4FA;
 }
 
-#sidebar ul li ul li a:hover {
-    background-color: rgba(111,89,117,0.2) ;   
-    border-radius: 10;
-    color : black;
+.bottom-buttons .btn {
+    width: 45%;
+    background-color: #EFEFEF;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: #333;
+}
+
+.bottom-buttons .btn:hover {
+    background-color: #ddd;
+}
+.buttons .btn:hover {
+    background-color: #ddd;
 }

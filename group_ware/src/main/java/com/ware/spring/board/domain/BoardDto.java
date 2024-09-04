@@ -20,15 +20,17 @@ public class BoardDto {
 	private Long board_no;
 	private String board_title;
 	private String board_content;
-	private Long board_writer_no;
-	private String board_writer_name;
-	
 	private LocalDateTime reg_date;
 	private LocalDateTime mod_date;
 	private String ori_thumbnail;
 	private String new_thumbnail;
+
+	private Long board_writer_no;
+	private String board_writer_name;
+	
 	private int search_type = 1;
 	private String search_text;
+	
 	
 	public Board toEntity() {
 		return Board.builder()

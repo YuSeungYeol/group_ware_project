@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+       	<link th:href="@{/css/home.css}" rel="stylesheet" type="text/css">
+       	<link th:href="@{/css/notice/list.css}" rel="stylesheet" type="text/css">
+       	<link th:href="@{/css/include/paging.css}" rel="stylesheet" type="text/css">
+       	<section>
+		<div id="section_wrap">
+			<div class="word">
+				<h3>공지사항</h3>
+			</div><br>
+			<div class="search" th:if="${searchDto != null}">
+				<form th:action="@{/notice}" th:object="${searchDto}" method="get">
+					<select name="search_type" th:value="${searchDto.search_type}">
+						<option th:value="1" th:selected="${searchDto.search_type} == '1'">제목</option>
+						<option th:value="2" th:selected="${searchDto.search_type} == '2'">내용</option>
+						<option th:value="3" th:selected="${searchDto.search_type} == '3'">제목+내용</option>
+					</select> 
+					<input type="text" name="search_text" 
+					th:field="*{search_text}" placeholder="검색어를 입력하세요">
+					<input type="submit" value="검색">
+				</form>
+			</div>
+			<div class="search" th:if="${searchDto == null}">
+				<form th:action="@{/notice}" method="get">
+					<select name="search_type">
+						<option th:value="1">제목</option>
+						<option th:value="2">내용</option>
+						<option th:value="3">제목+내용</option>
+					</select> 
+					<input type="text" name="search_text" placeholder="검색어를 입력하세요">
+					<input type="submit" value="검색">
+				</form>
+			</div>
+			<div class="book_list">
+				<table>
+					<colgroup>
+						<col width="10%">
+						<col width="20%">
+						<col width="20%">
+						<col width="20%">
+						<col width="10%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>번호</th>
+							<th>제목</th>
+							<th>내용</th>
+							<th>작성일자</th>
+							<th>상세</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:if="${#lists.isEmpty(resultList)}">
+							<tr>
+								<td colspan="5">해당하는 게시글이 없습니다.</td>
+							</tr>
+						</th:block>
+						<th:block th:if="${!#lists.isEmpty(resultList)}">
+							<tr th:each="notice, noticeStat : ${resultList}">
+								<td th:text="${noticeStat.index + 1}"></td>
+								<td th:text="${notice.notice_title}"></td>
+								<td th:text="${notice.notice_content}"></td>
+								<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+								<td>
+									<a th:href="@{/notice/{no}(no=${notice.notice_no})}">상세</a>
+								</td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+				<div class="center" th:if="${!resultList.isEmpty()}">
+					<div class="pagination"
+						th:with="
+						pageNumber = ${resultList.pageable.pageNumber},
+						pageSize = ${resultList.pageable.pageSize},
+						totalPages = ${resultList.totalPages},
+						startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},
+						tempEndPage = ${startPage + pageSize - 1},
+						endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})
+						">
+						<th:block th:if="${!resultList.first}">
+							<a th:href="${resultList.first} ? '#' : @{/board(page=${pageNumber - 1},search_text=${searchDto.search_text},search_type=${searchDto.search_type})}">&lt;</a>
+						</th:block>
+						<!-- * 컬렉션을 반복하는 것이 아니라 단순히 숫자만 반복할때 #numbers사용-->
+						<th:block th:each="page: ${#numbers.sequence(startPage, endPage)}">
+							<a th:text="${page}" th:href="@{/notice(page=${page} - 1,search_text=${searchDto.search_text},search_type=${searchDto.search_type})}" 
+							th:classappend="${page == pageNumber + 1} ? 'active'">1</a>
+						</th:block>
+						<th:block th:if="${!resultList.last}">
+							<a th:href="${resultList.last} ? '#' : @{/notice(page=${pageNumber + 1},search_text=${searchDto.search_text},search_type=${searchDto.search_type})}">&gt;</a>
+						</th:block>
+					</div>
+				</div>
+				<input type="button" value="등록" style="float:right;"
+				th:onclick="|location.href='@{/notice/create}'|">
+			</div>
+		</div>
+	</section>
+     </th:block>
+</html>
